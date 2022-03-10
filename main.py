@@ -1,8 +1,12 @@
 from time import time
 from venv import create
+from pygame import mixer
 import pygame
 from pygame.locals import *
 import random
+
+#pygame.mixer.pre_init(44100, -16, 2, 512)
+mixer.init()
 
 red = (255, 0, 0)
 orange = (255, 128, 0)
@@ -30,8 +34,16 @@ last_alien_shot = pygame.time.get_ticks()
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Space Invaders')
-
 bg = pygame.image.load("img/bg.png")
+
+explosion_fx = pygame.mixer.Sound("sound/explosion.wav")
+explosion_fx.set_volume(0.25)
+
+explosion2_fx = pygame.mixer.Sound("sound/explosion2.wav")
+explosion_fx.set_volume(0.25)
+
+laser_fx = pygame.mixer.Sound("sound/laser.wav")
+laser_fx.set_volume(0.25)
 
 def draw_bg():
     screen.blit(bg, (0,0))
@@ -135,7 +147,7 @@ class Explosion(pygame.sprite.Sprite):
 
         for num in range(1,6):
             img = pygame.image.load(f"img/exp{num}.png")
-            
+
             if size == 1:
                 img = pygame.transform.scale(img, (20, 20))
             if size == 2:
