@@ -1,4 +1,4 @@
-# space-invaders-pygame
+# Invasive drugs - pygame (Space Invaders)
 Projeto da disciplina de Computação Gráfica (IFRS - Campus Ibirubá)
 O jogo é baseado no clássico Space Invaders, porém tem a temática do programa PROERD, que enfatiza a luta contra as drogas.
 Abaixo seguem algumas instruções para instalação e execução do jogo.
