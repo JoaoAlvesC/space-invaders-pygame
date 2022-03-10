@@ -68,6 +68,8 @@ class Spaceship(pygame.sprite.Sprite):
         self.health_remaining = health
         self.last_shot = pygame.time.get_ticks()
 
+    
+
     def update(self):
         speed = 8
         cooldown = 500
@@ -81,10 +83,10 @@ class Spaceship(pygame.sprite.Sprite):
         if key[pygame.K_RIGHT] and self.rect.right < screen_width:
             self.rect.x += speed
 
-        if key[pygame.K_UP] and self.rect.bottom < screen_height:
+        if key[pygame.K_UP] and self.rect.top > 0:
             self.rect.y -= speed
 
-        if key[pygame.K_DOWN] and self.rect.top > 0:
+        if key[pygame.K_DOWN] and self.rect.bottom < screen_height:
             self.rect.y += speed
 
         time_now = pygame.time.get_ticks()
@@ -142,6 +144,15 @@ class Aliens(pygame.sprite.Sprite):
         if abs(self.move_counter) > 75:
             self.move_direction *= -1
             self.move_counter *= self.move_direction
+        
+        if pygame.sprite.spritecollide(self, spaceship_group, True, pygame.sprite.collide_mask):
+            spaceship.health_remaining = 0
+            explosion2_fx.play()
+            #self.kill()
+            explosion = Explosion(self.rect.centerx, self.rect.centery, 1)
+            explosion_group.add(explosion)
+    
+    
 
 class AlienBullets(pygame.sprite.Sprite):
     def __init__(self, x, y):
