@@ -71,7 +71,10 @@ class Spaceship(pygame.sprite.Sprite):
 
         if self.health_remaining > 0:
             pygame.draw.rect(screen, green, (self.rect.x, (self.rect.bottom + 10), int(self.rect.width * (self.health_remaining / self.health_start)), 15))
-
+        elif self.health_remaining <= 0:
+            explosion = Explosion(self.rect.centerx, self.rect.centery, 3)
+            explosion_group.add(explosion)
+            self.kill()
 
 class Bullets(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -129,8 +132,10 @@ class Explosion(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         pygame.sprite.Sprite.__init__(self)
         self.images = []
+
         for num in range(1,6):
             img = pygame.image.load(f"img/exp{num}.png")
+            
             if size == 1:
                 img = pygame.transform.scale(img, (20, 20))
             if size == 2:
@@ -139,7 +144,6 @@ class Explosion(pygame.sprite.Sprite):
                 img = pygame.transform.scale(img, (160, 160))
 
             self.images.append(img)
-
 
         self.index = 0    
         self.image = self.images[self.index]
