@@ -9,7 +9,7 @@ Inicialmente é necessário ter o Python instalado e o pip.
 ### Executando o jogo
 
 ```
-$ git clone https://github.com/HigorSnt/SpaceInvaders.git
+$ git clone https://github.com/JoaoAlvesC/space-invaders-pygame.git
 ```
 
 Em seguida, entre na pasta do jogo utilizando o terminal:
