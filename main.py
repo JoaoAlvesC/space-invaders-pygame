@@ -11,7 +11,7 @@ mixer.init()
 
 mixer.music.load("sound/background.mp3")
 mixer.music.play(-1)
-mixer.music.set_volume(0.20)
+mixer.music.set_volume(0.10)
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -32,7 +32,6 @@ last_alien_shot = pygame.time.get_ticks()
 countdown = 3
 last_count = pygame.time.get_ticks()
 game_over = 0
-
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Invasive drugs')
@@ -209,9 +208,9 @@ class Explosion(pygame.sprite.Sprite):
             self.kill()
 
 class ExtraLife(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, path):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("img/ifrs.png")
+        self.image = pygame.image.load(path)
         self.rect = self.image.get_rect()
         self.rect.center = [x,y]     
 
@@ -240,8 +239,8 @@ create_aliens()
 spaceship = Spaceship(int(screen_width / 2), screen_width - 10, 3 )
 spaceship_group.add(spaceship)
 
-extraLife = ExtraLife(30, screen_height - 60 )
-extraLife2 = ExtraLife(screen_width - 30, screen_height - 60 )
+extraLife = ExtraLife(30, screen_height - 60, "img/ifrs.png" )
+extraLife2 = ExtraLife(screen_width - 30, screen_height - 60, "img/computacao.png" )
 extraLife_group.add(extraLife)
 extraLife_group.add(extraLife2)
 
@@ -256,7 +255,7 @@ while run:
 
         time_now = pygame.time.get_ticks()
 
-        if time_now - last_alien_shot > alien_cooldown and len(alienBullet_group) < 5 and len(alien_group) > 0:
+        if time_now - last_alien_shot > alien_cooldown and len(alienBullet_group) < 7 and len(alien_group) > 0:
             attacking_alien = random.choice(alien_group.sprites())
             alien_bullet = AlienBullets(attacking_alien.rect.centerx, attacking_alien.rect.bottom)
             alienBullet_group.add(alien_bullet)
