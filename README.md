@@ -15,7 +15,7 @@ $ git clone https://github.com/JoaoAlvesC/space-invaders-pygame.git
 Em seguida, entre na pasta do jogo utilizando o terminal:
 
 ```
-$ cd SpaceInvaders
+$ cd space-invaders
 ```
 
 Por fim, faça o seguinte comando:
