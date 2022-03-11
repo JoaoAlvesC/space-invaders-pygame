@@ -11,7 +11,7 @@ mixer.init()
 
 mixer.music.load("sound/background.mp3")
 mixer.music.play(-1)
-mixer.music.set_volume(0.075)
+mixer.music.set_volume(0.05)
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -27,12 +27,16 @@ image = pygame.image.load("img/ifrs.png")
 rows = 5
 cols = 5
 
-alien_cooldown = 1000
+alien_cooldown = 1300
 last_alien_shot = pygame.time.get_ticks()
 countdown = 3
 last_count = pygame.time.get_ticks()
 game_over = 0
 score = 0
+resize_timer = 200
+last_resize = pygame.time.get_ticks()
+max_active_bullets = 6
+difficulty = 1
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Invasive drugs')
@@ -101,6 +105,7 @@ class Spaceship(pygame.sprite.Sprite):
 
         if self.health_remaining > 0:
             pygame.draw.rect(screen, green, (self.rect.x, (self.rect.bottom + 10), int(self.rect.width * (self.health_remaining / self.health_start)), 15))
+            
         elif self.health_remaining <= 0:
             explosion = Explosion(self.rect.centerx, self.rect.centery, 3)
             explosion_group.add(explosion)
@@ -111,7 +116,7 @@ class Spaceship(pygame.sprite.Sprite):
 class Bullets(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("img/bullet.png")
+        self.image = pygame.image.load("img/bullet1.png")
         self.rect = self.image.get_rect()
         self.rect.center = [x,y]
 
@@ -119,10 +124,10 @@ class Bullets(pygame.sprite.Sprite):
         self.rect.y -= 5
         if self.rect.bottom < 0:
             self.kill()
-        if pygame.sprite.spritecollide(self, alien_group, True):
+        if pygame.sprite.spritecollide(self, alien_group, True, pygame.sprite.collide_mask):
             self.kill()
             global score 
-            score += 1
+            score += 2
             explosion_fx.play()
             explosion = Explosion(self.rect.centerx, self.rect.centery, 2)
             explosion_group.add(explosion)
@@ -139,6 +144,8 @@ class Aliens(pygame.sprite.Sprite):
     def update(self):
         self.rect.x += self.move_direction
         self.move_counter += 1
+
+        self.mask = pygame.mask.from_surface(self.image)
         
         if abs(self.move_counter) > 75:
             self.move_direction *= -1
@@ -167,6 +174,14 @@ class AlienBullets(pygame.sprite.Sprite):
             spaceship.health_remaining -= 1
             explosion2_fx.play()
             self.kill()
+            explosion = Explosion(self.rect.centerx, self.rect.centery, 1)
+            explosion_group.add(explosion)
+
+        if pygame.sprite.spritecollide(self, bullet_group, True):
+            explosion2_fx.play()
+            self.kill()
+            global score
+            score += 1
             explosion = Explosion(self.rect.centerx, self.rect.centery, 1)
             explosion_group.add(explosion)
 
@@ -206,13 +221,16 @@ class Explosion(pygame.sprite.Sprite):
             self.kill()
 
 class ExtraLife(pygame.sprite.Sprite):
+    
     def __init__(self, x, y, path):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(path)
         self.rect = self.image.get_rect()
-        self.rect.center = [x,y]     
+        self.rect.center = [x,y]   
 
     def update(self):
+        key = pygame.key.get_pressed()
+
         if pygame.sprite.spritecollide(self, spaceship_group, False, pygame.sprite.collide_mask):
             self.kill()
             spaceship.health_remaining += 1
@@ -223,6 +241,7 @@ alien_group = pygame.sprite.Group()
 alienBullet_group = pygame.sprite.Group()
 explosion_group = pygame.sprite.Group()
 extraLife_group = pygame.sprite.Group()
+
 
 def create_aliens():
     for row in range(rows):
@@ -235,8 +254,9 @@ create_aliens()
 spaceship = Spaceship(int(screen_width / 2), screen_width - 10, 3 )
 spaceship_group.add(spaceship)
 
-extraLife = ExtraLife(30, screen_height - 60, "img/ifrs.png" )
-extraLife2 = ExtraLife(screen_width - 35, screen_height - 60, "img/computacao.png" )
+
+extraLife = ExtraLife(40, screen_height - 80, "img/ifrs.png" )
+extraLife2 = ExtraLife(screen_width - 40, screen_height - 80, "img/computacao.png" )
 extraLife_group.add(extraLife)
 extraLife_group.add(extraLife2)
 
@@ -251,7 +271,28 @@ while run:
 
         time_now = pygame.time.get_ticks()
 
-        if time_now - last_alien_shot > alien_cooldown and len(alienBullet_group) < 7 and len(alien_group) > 0:
+        print(alien_cooldown)
+        if score >= 10:
+            alien_cooldown = 1100
+            max_active_bullets = 8
+            difficulty = 2
+        if score >= 20:
+            alien_cooldown = 900
+            max_active_bullets = 10
+            difficulty = 3
+        if score >= 30:
+            alien_cooldown = 500
+            max_active_bullets = 13
+            difficulty = 4
+        if score >= 40:
+            max_active_bullets = 20
+            difficulty = 5
+        if score >= 45:
+            max_active_bullets = 35
+            difficulty = 6
+        
+
+        if time_now - last_alien_shot > alien_cooldown and len(alienBullet_group) < max_active_bullets and len(alien_group) > 0:
             attacking_alien = random.choice(alien_group.sprites())
             alien_bullet = AlienBullets(attacking_alien.rect.centerx, attacking_alien.rect.bottom)
             alienBullet_group.add(alien_bullet)
@@ -296,6 +337,8 @@ while run:
             run = False
 
     draw_text("SCORE: " + str(score), font30, white, 10, 10)
+    draw_text("Dificuldade: " + str(difficulty), font30, white, screen_width - 175, 10)
+    
     pygame.display.update()
 
 pygame.quit()
