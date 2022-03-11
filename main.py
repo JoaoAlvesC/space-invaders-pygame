@@ -11,7 +11,7 @@ mixer.init()
 
 mixer.music.load("sound/background.mp3")
 mixer.music.play(-1)
-mixer.music.set_volume(0.10)
+mixer.music.set_volume(0.075)
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -32,6 +32,7 @@ last_alien_shot = pygame.time.get_ticks()
 countdown = 3
 last_count = pygame.time.get_ticks()
 game_over = 0
+score = 0
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Invasive drugs')
@@ -66,8 +67,6 @@ class Spaceship(pygame.sprite.Sprite):
         self.health_start = health
         self.health_remaining = health
         self.last_shot = pygame.time.get_ticks()
-
-    
 
     def update(self):
         speed = 8
@@ -122,11 +121,12 @@ class Bullets(pygame.sprite.Sprite):
             self.kill()
         if pygame.sprite.spritecollide(self, alien_group, True):
             self.kill()
+            global score 
+            score += 1
             explosion_fx.play()
             explosion = Explosion(self.rect.centerx, self.rect.centery, 2)
             explosion_group.add(explosion)
-
-
+        
 class Aliens(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -151,8 +151,6 @@ class Aliens(pygame.sprite.Sprite):
             explosion = Explosion(self.rect.centerx, self.rect.centery, 1)
             explosion_group.add(explosion)
     
-    
-
 class AlienBullets(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -219,8 +217,6 @@ class ExtraLife(pygame.sprite.Sprite):
             self.kill()
             spaceship.health_remaining += 1
 
-        
-
 spaceship_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 alien_group = pygame.sprite.Group()
@@ -240,7 +236,7 @@ spaceship = Spaceship(int(screen_width / 2), screen_width - 10, 3 )
 spaceship_group.add(spaceship)
 
 extraLife = ExtraLife(30, screen_height - 60, "img/ifrs.png" )
-extraLife2 = ExtraLife(screen_width - 30, screen_height - 60, "img/computacao.png" )
+extraLife2 = ExtraLife(screen_width - 35, screen_height - 60, "img/computacao.png" )
 extraLife_group.add(extraLife)
 extraLife_group.add(extraLife2)
 
@@ -264,6 +260,7 @@ while run:
         if len(alien_group) == 0:
             game_over = 1
 
+
         if game_over == 0:    
             game_over = spaceship.update()
             bullet_group.update()
@@ -279,7 +276,7 @@ while run:
     
     if countdown > 0:
         draw_text("GET READY!", font40, white, int(screen_width / 2 - 110), int(screen_height / 2 + 50))
-        draw_text(str(countdown), font40, white, int(screen_width / 2 - 10), int(screen_height / 2 + 100))
+        draw_text(str(countdown), font30, white, int(screen_width / 2 - 10), int(screen_height / 2 + 100))
         count_timer = pygame.time.get_ticks()
         if count_timer - last_count > 1000:
             countdown -= 1
@@ -298,7 +295,7 @@ while run:
         if event.type == pygame.QUIT:
             run = False
 
-    #draw_text("SCORE: " + str(score), font30, white, 10, 10)
+    draw_text("SCORE: " + str(score), font30, white, 10, 10)
     pygame.display.update()
 
 pygame.quit()
