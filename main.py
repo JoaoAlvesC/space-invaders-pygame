@@ -51,6 +51,9 @@ explosion_fx.set_volume(0.25)
 explosion2_fx = pygame.mixer.Sound("sound/explosion2.wav")
 explosion_fx.set_volume(0.25)
 
+powerup_fx = pygame.mixer.Sound("sound/sucess.wav")
+powerup_fx.set_volume(0.25)
+
 laser_fx = pygame.mixer.Sound("sound/laser.wav")
 laser_fx.set_volume(0.15)
 
@@ -233,6 +236,7 @@ class ExtraLife(pygame.sprite.Sprite):
 
         if pygame.sprite.spritecollide(self, spaceship_group, False, pygame.sprite.collide_mask):
             self.kill()
+            powerup_fx.play()
             spaceship.health_remaining += 1
 
 spaceship_group = pygame.sprite.Group()
